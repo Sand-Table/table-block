@@ -4,7 +4,7 @@ This repository contains the 3D files and the code to create the sand table bloc
 
 [figure 1]
 
-# Timeline / Milestones / Journal de bord
+# Timeline / Notes / Explanations
 
 ## Week 1
 
