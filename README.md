@@ -35,14 +35,16 @@ We spent a lot of time trying to get consistent results in the rotation of the m
 
 ### Hardware
 
-- Going to the SKIL to discuss the design
-    - We decide to use bouleau as a wood type
+- Construction of the radius axis as well as the platform on which it will be placed begins.
+- Discussion around the design of the rotation axis and gearboxes to reduce the torque necessary take place. 
 ### Software
 
-- A great [instructibles](https://www.instructables.com/DIY-3-Axis-Polar-CNC-Machine/) tutorial exists that we followed: 
+- A great [instructibles](https://www.instructables.com/DIY-3-Axis-Polar-CNC-Machine/) discussing the construction of a CNC tutorial exists that we followed.This allowed us to discover:
+    - [grbl](https://github.com/grbl/grbl), software that allows to create an interface between the motors with the controllers and the computer.
+    - [ugc](https://github.com/winder/Universal-G-Code-Sender/releases/tag/v2.0.11), an interface for grbl.
 
 ### Issues we ran into:
 <details close>
 <summary></summary>
-We spent a lot of time trying to get consistent results in the rotation of the motor. Unfortuantely a <b>shortcirtuit</b> cost us a lot of time
+
 </details>
