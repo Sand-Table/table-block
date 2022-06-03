@@ -3,11 +3,8 @@ import logging
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 
-import serial
-
-port_name = "/dev/cu.usbserial-110"
-
-#dev = serial.Serial(port_name, baudrate=19200)
+import gcodegenerator
+import arduino
 
 TOKEN = "5330205048:AAEZkUKglQb8SAx4pnEzsBo75ovQ9f6sAso"
 
@@ -18,12 +15,13 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 list_drawings = [
-    "circle",
-    "square",
-    "triangle",
-    "star",
-    "heart"
+    "Small circle",
+    "Circle",
+    "Big circle",
+    "Concentric circles"
 ]
+
+coef_size = 50
 
 
 def generate_keyboard_drawings():
@@ -66,22 +64,30 @@ def error(update, context):
 
 def drawings(update, context):
     """"""
-    text="Select one geometric form and wait for the magic to happen!"
+    text = "Select one geometric form and wait for the magic to happen!"
     update.message.reply_text(text=text, reply_markup=InlineKeyboardMarkup(generate_keyboard_drawings_better()))
 
 
 def handle_button_click(update, context):
     """Parses the CallbackQuery."""
     query = update.callback_query
-    query.answer(text="Drawing a " + query.data, show_alert=False)
-    file = open('polarfile.gcode', 'r')
-    lines = file.readlines()
+    if query.data == "Concentric circles":
+        query.answer(text="Send me the number of circles want to see! (number only)", show_alert=False)
+    else:
+        query.answer(text="Drawing a " + query.data, show_alert=False)
+        gcodegenerator.write_circle_gcode((list_drawings.index(query.data) + 1) * coef_size)
+        arduino.write_design()
 
-    for index, line in enumerate(lines):
-        print(line)
-        #dev.write(line)
 
-    file.close()
+def message(update, context):
+    """"""
+    if (update.message.text.isnumeric()):
+        update.message.reply_text(text="Drawing " + update.message.text + " concentric circles !\nPlease send again "
+                                                                          "/drawings to continue")
+        gcodegenerator.write_concentric_circles_gcode(int(update.message.text))
+        arduino.write_design()
+    else:
+        update.message.reply_text(text="You should only send a number to draw concetric circles!")
 
 
 def main():
@@ -101,6 +107,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("drawings", drawings))
     dp.add_handler(CallbackQueryHandler(handle_button_click))
+    dp.add_handler(MessageHandler(Filters.text, message))
 
     dp.add_error_handler(error)
 
