@@ -5,7 +5,9 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 
 import serial
 
-dev = serial.Serial("/dev/cu.usbserial-110", baudrate=19200)
+port_name = "/dev/cu.usbserial-110"
+
+#dev = serial.Serial(port_name, baudrate=19200)
 
 TOKEN = "5330205048:AAEZkUKglQb8SAx4pnEzsBo75ovQ9f6sAso"
 
@@ -20,16 +22,7 @@ list_drawings = [
     "square",
     "triangle",
     "star",
-    "heart",
-    "spare",
-    "spare",
-    "spare",
-    "spare",
-    "spare",
-    "spare",
-    "spare",
-    "spare",
-    "spare"
+    "heart"
 ]
 
 
@@ -50,7 +43,7 @@ def generate_keyboard_drawings():
 
 def generate_keyboard_drawings_better():
     buttons = [InlineKeyboardButton(text=drawing, callback_data=drawing) for drawing in list_drawings]
-    fixedarr = [buttons[i:i + 4] for i in range(0, len(buttons), 4)]
+    fixedarr = [buttons[i:i + 3] for i in range(0, len(buttons), 3)]
     return fixedarr
 
 
@@ -81,6 +74,14 @@ def handle_button_click(update, context):
     """Parses the CallbackQuery."""
     query = update.callback_query
     query.answer(text="Drawing a " + query.data, show_alert=False)
+    file = open('polarfile.gcode', 'r')
+    lines = file.readlines()
+
+    for index, line in enumerate(lines):
+        print(line)
+        #dev.write(line)
+
+    file.close()
 
 
 def main():
